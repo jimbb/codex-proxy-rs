@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ZSelect } from '@codex-proxy/ui'
 import { computed, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import { useLocale } from '@/i18n'
 import { useAuthStore } from '@/stores/modules/auth'
 
 import LoginBackground from './components/LoginBackground.vue'
@@ -13,12 +15,18 @@ type LoginRealm = 'admin' | 'key'
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const { locale, localeOptions, setLocale } = useLocale()
 
 const realm = shallowRef<LoginRealm>(normalizeRealm(window.history.state?.loginMode))
 const username = shallowRef('')
 const password = shallowRef('')
 const apiKey = shallowRef('')
 const loginPending = shallowRef(false)
+
+function changeLocale(value: string | number | undefined): void {
+  if (value === 'en' || value === 'zh-TW' || value === 'zh-CN')
+    setLocale(value)
+}
 
 const canSubmit = computed(() => realm.value === 'key'
   ? Boolean(apiKey.value.trim())
@@ -73,7 +81,14 @@ function resolveDestination(): string {
   <main class="login-page relative isolate min-h-dvh overflow-hidden text-(--cp-login-title-color)">
     <LoginBackground />
 
-    <div class="absolute top-5 right-5 z-20 max-[560px]:top-4 max-[560px]:right-4">
+    <div class="absolute top-5 right-5 z-20 flex items-center gap-2 max-[560px]:top-4 max-[560px]:right-4">
+      <ZSelect
+        :model-value="locale"
+        :options="localeOptions"
+        aria-label="界面语言"
+        class="w-36"
+        @update:model-value="changeLocale"
+      />
       <LoginThemeToggle />
     </div>
 

@@ -17,6 +17,7 @@ import {
   usageUserAgent,
 } from '@/components/usage/shared/presenter'
 import { useChartPalette } from '@/composables/useChartPalette'
+import { translateText } from '@/i18n'
 import { formatDuration, formatInteger } from '@/utils/format'
 import { attemptOutcomeClass, attemptOutcomeText, displayValue, fieldLabelClass, fieldValueBaseClass, visibleRequestText, visibleResponseText } from '../utils/detail'
 import DiagnosticsDownloadButton from './DiagnosticsDownloadButton.vue'
@@ -254,10 +255,10 @@ const tokenDonutOption = computed<EChartsOption>(() => {
           return ''
         const name = 'name' in params && typeof params.name === 'string' ? params.name : ''
         const marker = 'marker' in params && typeof params.marker === 'string' ? params.marker : ''
-        const item = tokenChartItems.value.find(entry => entry.label === name)
+        const item = tokenChartItems.value.find(entry => translateText(entry.label) === name)
         if (!item)
           return ''
-        return `${marker}${item.label}: ${item.display}`
+        return `${marker}${translateText(item.label)}: ${item.display}`
       },
     },
     series: [
@@ -273,13 +274,13 @@ const tokenDonutOption = computed<EChartsOption>(() => {
         labelLine: { show: false },
         data: items.length
           ? items.map(item => ({
-              name: item.label,
+              name: translateText(item.label),
               value: item.value,
               itemStyle: { color: item.color },
             }))
           : [
               {
-                name: '暂无',
+                name: translateText('暂无'),
                 value: 1,
                 itemStyle: { color: palette.value.surfaceMuted },
               },

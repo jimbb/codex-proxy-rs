@@ -3,7 +3,7 @@ import type { AccountProfileActivityInsights, AccountProfileInvocation } from '@
 import { Package } from '@lucide/vue'
 import { computed } from 'vue'
 
-import { formatInteger } from '@/utils/format'
+import { formatInteger, numberLocale } from '@/utils/format'
 
 const props = defineProps<{
   insights: AccountProfileActivityInsights
@@ -32,7 +32,7 @@ function formatNumber(value: number | null) {
 function formatPercent(value: number | null) {
   if (value === null)
     return '—'
-  return `${new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 1 }).format(value)}%`
+  return `${new Intl.NumberFormat(numberLocale(), { maximumFractionDigits: 1 }).format(value)}%`
 }
 
 function formatReasoning(effort: string | null, percent: number | null) {

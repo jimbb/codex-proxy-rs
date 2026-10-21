@@ -7,6 +7,7 @@ import { computed, shallowRef, watch } from 'vue'
 import { sampleGapBridgeSeries } from '@/components/charts/timeSeriesGap'
 import { chartTooltipStyle, tooltipIndex } from '@/components/charts/tooltip'
 import { useChartPalette } from '@/composables/useChartPalette'
+import { translateText } from '@/i18n'
 
 type TrendKind = ReturnType<typeof normalizeDashboardTrendKind>
 type TrendView = ReturnType<typeof dashboardTrendView>
@@ -218,26 +219,26 @@ export function useRequestTrendChart(options: {
 
   function tooltipDisplayValue(point: TrendPoint | undefined, name: string, value: string) {
     if (activeKind.value === 'usage') {
-      if (name === '输入')
+      if (name === translateText('输入'))
         return point?.inputTokens ?? value
-      if (name === '输出')
+      if (name === translateText('输出'))
         return point?.outputTokens ?? value
-      if (name === '缓存')
+      if (name === translateText('缓存'))
         return point?.cachedInputTokens ?? value
     }
     if (activeKind.value === 'latency') {
-      if (name === '首字 P95')
+      if (name === translateText('首字 P95'))
         return formatLatency(point?.firstTokenP95Ms, value)
-      if (name === '总耗时 P95')
+      if (name === translateText('总耗时 P95'))
         return formatLatency(point?.latencyP95Ms, value)
-      if (name === '速率 P50')
+      if (name === translateText('速率 P50'))
         return point?.outputThroughputP50 == null ? value : `${point.outputThroughputP50} tok/s`
     }
-    if (name === '错误数')
+    if (name === translateText('错误数'))
       return point?.errors ?? value
-    if (name === '成功率')
+    if (name === translateText('成功率'))
       return zeroAwareRateText(point, 'successRate', 'requestsValue') ?? value
-    if (name === '总请求')
+    if (name === translateText('总请求'))
       return point?.requests ?? value
     return value
   }
@@ -338,8 +339,9 @@ export function useRequestTrendChart(options: {
   ): LineSeriesOption {
     const area = lineOptions.area ?? false
     const muted = isSeriesMuted(name)
+    const displayName = translateText(name)
     return {
-      name,
+      name: displayName,
       type: 'line',
       data,
       connectNulls: false,
@@ -385,10 +387,11 @@ export function useRequestTrendChart(options: {
     lineOptions: LineSeriesOptions = {},
   ) {
     const primary = lineSeries(name, data, color, lineOptions)
+    const displayName = translateText(name)
     return [
       primary,
       ...sampleGapBridgeSeries(data, {
-        name,
+        name: displayName,
         color,
         width: lineOptions.width,
         xAxisIndex: lineOptions.xAxisIndex,
@@ -405,8 +408,9 @@ export function useRequestTrendChart(options: {
     barOptions: BarSeriesOptions = {},
   ): BarSeriesOption {
     const muted = isSeriesMuted(name)
+    const displayName = translateText(name)
     return {
-      name,
+      name: displayName,
       type: 'bar',
       data,
       barMaxWidth: barOptions.maxWidth ?? 16,
@@ -493,7 +497,7 @@ function tooltipItem(label: string, value: string | undefined, color: string) {
   if (!value)
     return ''
   const marker = `<span style="display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:999px;background:${color}"></span>`
-  return `${marker}${label}: ${value}`
+  return `${marker}${translateText(label)}: ${value}`
 }
 
 function tooltipValue(source: unknown, key: string) {

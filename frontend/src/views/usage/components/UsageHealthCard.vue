@@ -10,6 +10,7 @@ import BaseChart from '@/components/charts/BaseChart.vue'
 import { tooltipIndex, tooltipRows } from '@/components/charts/tooltip'
 import { healthEligibleRequestCount } from '@/components/usage/shared/health'
 import { useChartPalette } from '@/composables/useChartPalette'
+import { translateText } from '@/i18n'
 import { formatLocalizedCompactNumber as formatCompactNumber, formatPercent } from '@/utils/format'
 
 import {
@@ -122,7 +123,7 @@ function serviceSuccessRate(point: HealthPoint) {
 
 function outcomeSeries(name: string, data: number[], color: string) {
   return {
-    name,
+    name: translateText(name),
     type: 'bar' as const,
     stack: 'outcome',
     data,

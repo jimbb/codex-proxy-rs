@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PluginManagementView } from '@/api'
 
-import { ZIconButton, ZMotionIcon, ZScrollbar } from '@codex-proxy/ui'
+import { ZIconButton, ZMotionIcon, ZScrollbar, ZSelect } from '@codex-proxy/ui'
 import {
   ArrowUpCircle,
   Blocks,
@@ -10,6 +10,7 @@ import {
   FolderTree,
   Info,
   KeyRound,
+  Languages,
   LayoutDashboard,
   LogOut,
   Moon,
@@ -30,6 +31,7 @@ import { storeToRefs } from 'pinia'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, useTemplateRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppBrandMark from '@/components/AppBrandMark.vue'
+import { useLocale } from '@/i18n'
 import { useAuthStore } from '@/stores/modules/auth'
 import { usePluginViewsStore } from '@/stores/modules/plugin-views'
 import { useSystemUpdateStore } from '@/stores/modules/system-update'
@@ -63,6 +65,7 @@ const { pageViews: pluginPageViews } = storeToRefs(pluginViewsStore)
 const { version, hasUpdate } = storeToRefs(systemUpdateStore)
 const { effectiveTheme } = storeToRefs(themeStore)
 const { toggleTheme } = themeStore
+const { locale, localeOptions, setLocale, cycleLocale } = useLocale()
 const preferredMotion = usePreferredReducedMotion()
 const isCollapsed = computed(() => !props.mobile && Boolean(props.collapsed))
 const pluginMenuId = useId()
@@ -184,6 +187,12 @@ const versionText = computed(() => version.value?.version.trim() ?? '')
 const hasVersionLabel = computed(() => versionText.value.length > 0)
 const versionLabel = computed(() => `v${versionText.value}`)
 const updateButtonLabel = computed(() => (hasUpdate.value ? '发现新版本，打开系统更新' : '打开系统更新'))
+const languageButtonLabel = computed(() => `切换语言（${localeOptions.find(option => option.value === locale.value)?.label ?? 'English'}）`)
+
+function changeLocale(value: string | number | undefined): void {
+  if (value === 'en' || value === 'zh-TW' || value === 'zh-CN')
+    setLocale(value)
+}
 
 function prefersReducedMotion() {
   return preferredMotion.value === 'reduce'
@@ -550,6 +559,14 @@ onBeforeUnmount(() => {
     </ZScrollbar>
 
     <div class="mx-4 mb-6 shrink-0" :class="isCollapsed ? 'w-11' : 'self-stretch'">
+      <ZSelect
+        v-if="!isCollapsed"
+        :model-value="locale"
+        :options="localeOptions"
+        aria-label="界面语言"
+        class="mb-2 w-full"
+        @update:model-value="changeLocale"
+      />
       <div
         class="bg-cp-fill-quaternary"
         :class="isCollapsed ? 'grid gap-1 rounded-cp p-1' : 'flex h-11 items-center justify-between rounded-cp-lg px-2'"
@@ -563,6 +580,16 @@ onBeforeUnmount(() => {
         </span>
 
         <div class="flex items-center" :class="isCollapsed ? 'grid gap-1' : 'gap-1'">
+          <ZIconButton
+            v-if="isCollapsed"
+            :size="isCollapsed ? 'default' : 'small'"
+            :aria-label="languageButtonLabel"
+            :title="languageButtonLabel"
+            @click="cycleLocale"
+          >
+            <Languages :size="isCollapsed ? 19 : 18" />
+          </ZIconButton>
+
           <ZIconButton
             v-if="isCollapsed && hasUpdate"
             type="success" variant="plain"

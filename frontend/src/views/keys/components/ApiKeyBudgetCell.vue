@@ -2,6 +2,7 @@
 import type { ApiKey } from '@/api'
 import { ZPopover } from '@codex-proxy/ui'
 import { computed } from 'vue'
+import { numberLocale } from '@/utils/format'
 
 const props = defineProps<{ apiKey: ApiKey }>()
 const windows = computed(() => [
@@ -10,7 +11,7 @@ const windows = computed(() => [
 ])
 function amount(value: string) {
   // 列表最多显示两位小数，不补末尾零；明细保留原始金额的全部精度。
-  return Number(value).toLocaleString('en-US', { maximumFractionDigits: 2 })
+  return Number(value).toLocaleString(numberLocale(), { maximumFractionDigits: 2 })
 }
 </script>
 

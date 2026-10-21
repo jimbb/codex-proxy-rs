@@ -1,6 +1,7 @@
 import { vLoading } from '@codex-proxy/ui'
 import { createApp } from 'vue'
 import App from './App.vue'
+import { installI18n } from './i18n'
 
 import { authPlugin } from './plugins/auth'
 import { router } from './router'
@@ -22,3 +23,4 @@ useThemeStore(pinia).initializeTheme()
 app.use(router)
 app.use(authPlugin)
 app.mount('#app')
+installI18n()

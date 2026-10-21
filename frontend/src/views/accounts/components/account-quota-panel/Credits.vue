@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { AccountQuotaCredits } from '@/api'
 import { computed } from 'vue'
+import { numberLocale } from '@/utils/format'
 
 const props = defineProps<{
   credits: AccountQuotaCredits | null
 }>()
 
-const integerFormatter = new Intl.NumberFormat('zh-CN')
 const balanceDisplay = computed(() => {
   const balance = props.credits?.balance?.trim()
   const decimal = balance?.match(/^(-?)(\d+)(?:\.(\d+))?$/)
@@ -14,7 +14,7 @@ const balanceDisplay = computed(() => {
     return null
   const [, sign, integer, fraction] = decimal
   // 点数可能包含高精度小数，整数分组与小数文本分别处理，避免转成浮点数。
-  const grouped = `${sign}${integerFormatter.format(BigInt(integer!))}`
+  const grouped = `${sign}${new Intl.NumberFormat(numberLocale()).format(BigInt(integer!))}`
   return fraction ? `${grouped}.${fraction}` : grouped
 })
 const value = computed(() => {

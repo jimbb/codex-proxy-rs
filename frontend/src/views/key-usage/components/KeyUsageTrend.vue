@@ -6,6 +6,7 @@ import { computed } from 'vue'
 import BaseChart from '@/components/charts/BaseChart.vue'
 import { chartTooltipStyle } from '@/components/charts/tooltip'
 import { useChartPalette } from '@/composables/useChartPalette'
+import { translateText } from '@/i18n'
 import { formatCompactNumber, formatInteger } from '@/utils/format'
 import { money } from '../utils/format'
 import { keyUsageTokenMetrics, keyUsageTokenValue } from '../utils/metrics'
@@ -48,7 +49,7 @@ const option = computed<EChartsOption>(() => {
       { type: 'value', min: 0, axisLabel: { color: colors.textMuted, fontSize: 10, formatter: (value: number) => money(value) }, splitLine: { show: false } },
     ],
     series: lines.map((line): LineSeriesOption => ({
-      name: line.name,
+      name: translateText(line.name),
       type: 'line',
       data: line.data,
       yAxisIndex: line.cost ? 1 : 0,

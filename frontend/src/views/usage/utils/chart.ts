@@ -2,6 +2,7 @@ import type { LineSeriesOption } from 'echarts'
 import type { useChartPalette } from '@/composables/useChartPalette'
 import { sampleGapBridgeSeries } from '@/components/charts/timeSeriesGap'
 import { chartTooltipStyle } from '@/components/charts/tooltip'
+import { translateText } from '@/i18n'
 import { formatLocalizedCompactNumber } from '@/utils/format'
 
 type UsageChartPalette = ReturnType<typeof useChartPalette>['palette']['value']
@@ -34,7 +35,7 @@ function usageLineSeries(
   const showSymbols = sampleCount > 0 && sampleCount <= 12
 
   return {
-    name,
+    name: translateText(name),
     type: 'line',
     data: data.map(value => value ?? null),
     connectNulls: false,
@@ -76,7 +77,7 @@ export function usageGapAwareLineSeries(
   return [
     primary,
     ...sampleGapBridgeSeries(data, {
-      name,
+      name: translateText(name),
       color,
       xAxisIndex: options.xAxisIndex,
       yAxisIndex: options.yAxisIndex,
@@ -107,7 +108,7 @@ export function usageTooltipContent(
 }
 
 export function usageTooltipItem(label: string, value: string, color: string) {
-  return `<span style="display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:999px;background:${escapeTooltip(color)}"></span>${escapeTooltip(label)}: ${escapeTooltip(value)}`
+  return `<span style="display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:999px;background:${escapeTooltip(color)}"></span>${escapeTooltip(translateText(label))}: ${escapeTooltip(value)}`
 }
 
 export function usageCategoryAxis(labels: string[], theme: UsageChartPalette) {
@@ -158,7 +159,7 @@ export function usageLegend(theme: UsageChartPalette, data: string[]) {
     itemWidth: 8,
     itemHeight: 8,
     icon: 'circle' as const,
-    data,
+    data: data.map(translateText),
     textStyle: {
       color: theme.textSecondary,
       fontSize: 11,
