@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { ZButton } from '@codex-proxy/ui'
+
 import { Download } from '@lucide/vue'
 import { onScopeDispose, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { downloadDiagnostics } from '@/api'
 import { useAsyncAction } from '@/composables/useAsyncAction'
 import { useDownload } from '@/composables/useDownload'
 
 const props = defineProps<{ requestId?: string | null, errorId?: string | null, active: boolean }>()
+
+const { t } = useI18n({ useScope: 'global' })
+
 const { downloadBlob } = useDownload()
 const { loading, run } = useAsyncAction()
 let controller: AbortController | undefined
@@ -35,7 +40,7 @@ function download() {
       if (controller === current)
         controller = undefined
     }
-  }, { errorText: '下载诊断包失败', minimumMs: 400 })
+  }, { errorText: t('usage.diagnostics.downloadFailed'), minimumMs: 400 })
 }
 </script>
 
@@ -44,6 +49,6 @@ function download() {
     <template #icon>
       <Download :size="16" />
     </template>
-    {{ loading ? '正在生成诊断包' : '下载诊断包' }}
+    {{ loading ? t('usage.diagnostics.generatingDiagnosticPackage') : t('usage.diagnostics.downloadDiagnosticPackage') }}
   </ZButton>
 </template>

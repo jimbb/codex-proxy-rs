@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { AccountQuotaCredits } from '@/api'
+
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { numberLocale } from '@/utils/format'
 
 const props = defineProps<{
   credits: AccountQuotaCredits | null
 }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const balanceDisplay = computed(() => {
   const balance = props.credits?.balance?.trim()
@@ -19,19 +23,19 @@ const balanceDisplay = computed(() => {
 })
 const value = computed(() => {
   if (props.credits?.unlimited)
-    return '无限'
+    return t('accounts.quota.unlimited')
   if (balanceDisplay.value !== null)
     return balanceDisplay.value
   if (props.credits && !props.credits.hasCredits)
-    return '暂无可用点数'
-  return '未提供余额'
+    return t('accounts.quota.noPointsAvailableYet')
+  return t('usage.balanceUnavailable')
 })
 const hasBalance = computed(() => !props.credits?.unlimited && balanceDisplay.value !== null)
 </script>
 
 <template>
-  <div class="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 pb-4" aria-label="额度点数">
-    <span class="text-cp-sm font-heavy text-cp-text">额度点数</span>
+  <div class="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 pb-4" :aria-label="t('accounts.quota.quotaPoints')">
+    <span class="text-cp-sm font-heavy text-cp-text">{{ t('accounts.quota.quotaPoints') }}</span>
     <span class="flex min-w-0 items-baseline gap-1.5">
       <strong
         class="min-w-0 text-right text-cp-sm font-heavy wrap-anywhere"
@@ -39,7 +43,7 @@ const hasBalance = computed(() => !props.credits?.unlimited && balanceDisplay.va
       >
         {{ value }}
       </strong>
-      <span v-if="hasBalance" class="shrink-0 text-cp-xs text-cp-text-tertiary">点</span>
+      <span v-if="hasBalance" class="shrink-0 text-cp-xs text-cp-text-tertiary">{{ t('accounts.quota.point') }}</span>
     </span>
   </div>
 </template>

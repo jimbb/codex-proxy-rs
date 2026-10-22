@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { ZSelect } from '@codex-proxy/ui'
+
 import { computed, shallowRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
-import { useLocale } from '@/i18n'
+import { useLocale } from '@/composables/useLocale'
 import { useAuthStore } from '@/stores/modules/auth'
 
 import LoginBackground from './components/LoginBackground.vue'
 import LoginPanel from './components/LoginPanel.vue'
 import LoginThemeToggle from './components/LoginThemeToggle.vue'
+
+const { t } = useI18n({ useScope: 'global' })
 
 type LoginRealm = 'admin' | 'key'
 
@@ -22,11 +26,6 @@ const username = shallowRef('')
 const password = shallowRef('')
 const apiKey = shallowRef('')
 const loginPending = shallowRef(false)
-
-function changeLocale(value: string | number | undefined): void {
-  if (value === 'en' || value === 'zh-TW' || value === 'zh-CN')
-    setLocale(value)
-}
 
 const canSubmit = computed(() => realm.value === 'key'
   ? Boolean(apiKey.value.trim())
@@ -85,16 +84,16 @@ function resolveDestination(): string {
       <ZSelect
         :model-value="locale"
         :options="localeOptions"
-        aria-label="界面语言"
+        :aria-label="t('common.language')"
         class="w-36"
-        @update:model-value="changeLocale"
+        @update:model-value="setLocale"
       />
       <LoginThemeToggle />
     </div>
 
     <section
       class="grid min-h-dvh items-center justify-items-center px-5 py-[clamp(24px,5dvh,64px)] min-[980px]:justify-items-end min-[980px]:pr-[clamp(48px,17.3vw,332px)] max-[560px]:p-4.5"
-      aria-label="Codex Proxy RS 登录"
+      :aria-label="t('auth.pageLabel')"
     >
       <div class="min-h-120 w-[min(440px,100%)]">
         <LoginPanel

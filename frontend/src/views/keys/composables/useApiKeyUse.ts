@@ -1,10 +1,11 @@
 import type { ApiKey } from '@/api'
-import { ZNotification } from '@codex-proxy/ui'
 import { shallowRef } from 'vue'
 import { revealApiKey } from '@/api'
 import { useCopyText } from '@/composables/useCopyText'
 import { useIdSet } from '@/composables/useIdSet'
+import { t } from '@/i18n'
 import { buildCodexCcSwitchImportDeeplink, resolveServiceRootUrl } from '@/utils/client'
+import { notification as ZNotification } from '@/utils/notification'
 
 // 明文读取、复制、展示与导入共用生命周期，列表数据不保存明文。
 export function useApiKeyUse() {
@@ -55,7 +56,7 @@ export function useApiKeyUse() {
   }
 
   async function copyToClipboard(text: string) {
-    await copyText(text, { successText: '已复制到剪贴板', emptyErrorText: '复制失败' })
+    await copyText(text, { successText: t('keys.configuration.copiedToClipboard'), emptyErrorText: t('common.errors.copy') })
   }
 
   async function revealPlaintextKey(apiKey: ApiKey) {
@@ -64,7 +65,7 @@ export function useApiKeyUse() {
       if (!result)
         return undefined
       if (!result.plaintextKey) {
-        ZNotification.error({ message: '完整 API Key 不可用' })
+        ZNotification.error({ message: t('keys.configuration.fullApiKeyNotAvailable') })
         return undefined
       }
       return result.plaintextKey

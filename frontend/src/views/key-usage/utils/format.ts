@@ -1,8 +1,9 @@
+import { t } from '@/i18n'
 import { numberLocale } from '@/utils/format'
 
 export function money(value: string | number | null, currency = 'USD') {
   if (value === null)
-    return '未定价'
+    return t('usage.metrics.notPriced')
   const amount = Number(value)
   if (!Number.isFinite(amount))
     return '—'
