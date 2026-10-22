@@ -1935,7 +1935,7 @@ export const translationEntries = [
   ["设置倍率","Set magnification","設定倍率"],
   ["设置分区","Set up partitions","設定分區"],
   ["访问令牌","access token","訪問令牌"],
-  ["访问密钥","access key","存取密鑰"],
+  ["访问密钥","Access key","存取密鑰"],
   ["访问限制","Access restrictions","訪問限制"],
   ["诊断数据","diagnostic data","診斷數據"],
   ["诊断维度","diagnostic dimension","診斷維度"],
