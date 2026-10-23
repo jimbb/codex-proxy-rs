@@ -49,7 +49,7 @@ pub(crate) fn outcome_name(outcome: &domain::RequestOutcome) -> &str {
     outcome.as_str()
 }
 
-pub(crate) fn request_metrics_view(metrics: &domain::RequestMetrics) -> RequestMetricsView {
+fn request_summary_metrics_view(metrics: &domain::RequestSummaryMetrics) -> RequestMetricsView {
     RequestMetricsView {
         request_count: metrics.request_count,
         success_count: metrics.success_count,
@@ -1050,7 +1050,7 @@ pub(crate) fn usage_summary_view(
     summary: domain::UsageSummary,
     time: crate::time::TimePresenter,
 ) -> UsageSummaryView {
-    let overview = summary.overview;
+    let overview = summary.observation;
     UsageSummaryView {
         analytics: analytics_view(overview.analytics, time),
         total_requests: format_compact_number(overview.requests.request_count),
@@ -1060,7 +1060,7 @@ pub(crate) fn usage_summary_view(
         cache_write_input_tokens: format_compact_number(overview.requests.cache_write_input_tokens),
         total_tokens: format_compact_number(overview.requests.total_tokens),
         average_latency_ms: display_duration(summary.average_latency_ms),
-        logical_requests: request_metrics_view(&overview.requests),
+        logical_requests: request_summary_metrics_view(&overview.requests),
         attempts: attempt_metrics_view(&overview.attempts),
     }
 }

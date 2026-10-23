@@ -84,9 +84,12 @@
       "error": "错误",
       "requestDetailType": "请求明细类型",
       "label": "使用记录筛选与操作",
-      "keyNameAccountOrModel": "密钥名称、账号或模型",
-      "searchLabel": "搜索使用记录：密钥名称、账号或模型",
-      "refreshUsageHistory": "刷新使用记录"
+      "refreshUsageHistory": "刷新使用记录",
+      "keyName": "密钥名称",
+      "account": "账号",
+      "fieldLabel": "请求明细筛选字段",
+      "enterFilterValue": "输入筛选内容",
+      "valueLabel": "请求明细筛选内容"
     },
     "route": {
       "compressionRequest": "压缩请求"
@@ -193,8 +196,6 @@
       "changesInUsageOverTime": "用量随时间的变化",
       "requestHealthTimeline": "请求健康时间线",
       "updated": "更新于 {asOfDisplay}",
-      "enterFullModelName": "输入完整模型名称",
-      "modelFilterLabel": "筛选统计和日志的模型",
       "temporarilyRetainLastResult": "，暂时保留上次结果",
       "clickRefreshAtTopToTryAgain": "，请点击顶部刷新重试",
       "description": "查看请求用量、性能趋势与调用错误记录",
@@ -230,8 +231,6 @@
     },
     "firstTokenLatency": "TTFT",
     "diagnostics": {
-      "downloadFailed": "下载诊断包失败",
-      "generatingDiagnosticPackage": "正在生成诊断包",
       "downloadDiagnosticPackage": "下载诊断包",
       "key": "密钥",
       "transport": "传输",

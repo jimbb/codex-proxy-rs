@@ -84,9 +84,12 @@
       "error": "錯誤",
       "requestDetailType": "請求明細類型",
       "label": "使用記錄篩選與操作",
-      "keyNameAccountOrModel": "密鑰名稱、賬號或模型",
-      "searchLabel": "搜索使用記錄：密鑰名稱、賬號或模型",
-      "refreshUsageHistory": "刷新使用記錄"
+      "refreshUsageHistory": "刷新使用記錄",
+      "keyName": "密鑰名稱",
+      "account": "賬號",
+      "fieldLabel": "請求明細篩選字段",
+      "enterFilterValue": "輸入篩選內容",
+      "valueLabel": "請求明細篩選內容"
     },
     "route": {
       "compressionRequest": "壓縮請求"
@@ -193,8 +196,6 @@
       "changesInUsageOverTime": "用量隨時間的變化",
       "requestHealthTimeline": "請求健康時間線",
       "updated": "更新於 {asOfDisplay}",
-      "enterFullModelName": "輸入完整模型名稱",
-      "modelFilterLabel": "篩選統計和日誌的模型",
       "temporarilyRetainLastResult": "，暫時保留上次結果",
       "clickRefreshAtTopToTryAgain": "，請點擊頂部刷新重試",
       "description": "查看請求用量、性能趨勢與調用錯誤記錄",
@@ -230,8 +231,6 @@
     },
     "firstTokenLatency": "TTFT",
     "diagnostics": {
-      "downloadFailed": "下載診斷包失敗",
-      "generatingDiagnosticPackage": "正在生成診斷包",
       "downloadDiagnosticPackage": "下載診斷包",
       "key": "密鑰",
       "transport": "傳輸",

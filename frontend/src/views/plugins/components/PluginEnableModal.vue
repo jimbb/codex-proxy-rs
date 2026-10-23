@@ -15,7 +15,7 @@ const props = defineProps<{
   saving: boolean
 }>()
 
-defineEmits<{ confirm: [] }>()
+defineEmits<{ confirm: [], closed: [] }>()
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -33,7 +33,7 @@ const parameters = computed(() => {
 </script>
 
 <template>
-  <ZDialog v-model="open" :title="replacements.length ? t('plugins.enable.switchActiveConfiguration') : t('plugins.enable.enablePluginConfiguration')" width="36rem" :show-close="!saving" :close-on-click-modal="!saving" :close-on-press-escape="!saving">
+  <ZDialog v-model="open" :title="replacements.length ? t('plugins.enable.switchActiveConfiguration') : t('plugins.enable.enablePluginConfiguration')" width="36rem" :show-close="!saving" :close-on-click-modal="!saving" :close-on-press-escape="!saving" @closed="$emit('closed')">
     <div v-if="request" class="grid gap-4">
       <div class="grid gap-3 rounded-cp bg-cp-fill-alter p-4">
         <div class="flex min-w-0 flex-wrap items-center gap-2">

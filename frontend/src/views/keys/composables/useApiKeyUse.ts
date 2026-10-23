@@ -1,8 +1,9 @@
 import type { ApiKey } from '@/api'
-import { shallowRef } from 'vue'
+import { onScopeDispose, shallowRef } from 'vue'
 import { revealApiKey } from '@/api'
 import { useCopyText } from '@/composables/useCopyText'
 import { useIdSet } from '@/composables/useIdSet'
+import { useRequestState } from '@/composables/useRequestState'
 import { t } from '@/i18n'
 import { buildCodexCcSwitchImportDeeplink, resolveServiceRootUrl } from '@/utils/client'
 import { notification as ZNotification } from '@/utils/notification'
@@ -11,6 +12,7 @@ import { notification as ZNotification } from '@/utils/notification'
 export function useApiKeyUse() {
   const copyText = useCopyText()
   const revealingKeys = useIdSet<string>()
+  const revealRequest = useRequestState()
   const showUseKeyModal = shallowRef(false)
   const selectedUseKey = shallowRef<(ApiKey & { key: string }) | null>(null)
   const showCreatedKeyModal = shallowRef(false)
@@ -36,22 +38,20 @@ export function useApiKeyUse() {
     })
   }
 
-  async function openUseKeyModal(apiKey: ApiKey) {
-    const key = await revealPlaintextKey(apiKey)
-    if (!key)
-      return
-    selectedUseKey.value = { ...apiKey, key }
-    showUseKeyModal.value = true
+  function openUseKeyModal(apiKey: ApiKey) {
+    return withPlaintextKey(apiKey, (key) => {
+      selectedUseKey.value = { ...apiKey, key }
+      showUseKeyModal.value = true
+    })
   }
 
-  async function importToCcs(apiKey: ApiKey) {
-    const key = await revealPlaintextKey(apiKey)
-    if (!key)
-      return
-    window.location.href = buildCodexCcSwitchImportDeeplink({
-      apiKey: key,
-      baseUrl: openAiBaseUrl,
-      providerName: apiKey.name || apiKey.prefix || 'codex-proxy-rs',
+  function importToCcs(apiKey: ApiKey) {
+    return withPlaintextKey(apiKey, (key) => {
+      window.location.href = buildCodexCcSwitchImportDeeplink({
+        apiKey: key,
+        baseUrl: openAiBaseUrl,
+        providerName: apiKey.name || apiKey.prefix || 'codex-proxy-rs',
+      })
     })
   }
 
@@ -59,32 +59,42 @@ export function useApiKeyUse() {
     await copyText(text, { successText: t('keys.configuration.copiedToClipboard'), emptyErrorText: t('common.errors.copy') })
   }
 
-  async function revealPlaintextKey(apiKey: ApiKey) {
+  async function withPlaintextKey(apiKey: ApiKey, use: (key: string) => void | Promise<void>) {
+    if (revealingKeys.has(apiKey.id))
+      return
+    // 明文操作共用一个当前意图，跨行点击和页面离开都使旧结果失效
+    const requestId = revealRequest.start()
     try {
-      const result = await revealingKeys.run(apiKey.id, () => revealApiKey({ id: apiKey.id }))
-      if (!result)
-        return undefined
+      const result = await revealingKeys.run(apiKey.id, () => revealApiKey({ id: apiKey.id }, { signal: revealRequest.signal }))
+      if (!result || !revealRequest.isCurrent(requestId))
+        return
       if (!result.plaintextKey) {
         ZNotification.error({ message: t('keys.configuration.fullApiKeyNotAvailable') })
-        return undefined
+        return
       }
-      return result.plaintextKey
+      await use(result.plaintextKey)
     }
-    catch {
-      return undefined
+    catch (error) {
+      revealRequest.fail(requestId, error)
+    }
+    finally {
+      revealRequest.finish(requestId)
     }
   }
 
-  async function copyApiKey(apiKey: ApiKey) {
-    const key = await revealPlaintextKey(apiKey)
-    if (key)
-      await copyToClipboard(key)
+  function copyApiKey(apiKey: ApiKey) {
+    return withPlaintextKey(apiKey, copyToClipboard)
   }
 
   function clearCreatedKey() {
     createdKey.value = ''
     createdKeyName.value = ''
   }
+
+  onScopeDispose(() => {
+    selectedUseKey.value = null
+    clearCreatedKey()
+  })
 
   return {
     showUseKeyModal,
